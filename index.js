@@ -2,27 +2,28 @@ const exec = require('child_process').exec;
 
 class Gpio {
 
-    constructor({ pin = 5, mode = 'out', ready = ()=>{} }){
+    constructor({ pin = 5, mode = 'out', ready = ()=>{}, cmd='/usr/local/bin/gpio' }){
 
         this.pin    = pin;
         this.mode   = mode;
+        this.cmd    = cmd;
 
         this.init().then(()=> { ready(); });
     }
 
     init(){
-        return this.cmd(`gpio mode ${this.pin} ${this.mode}`);
+        return this.cmd(`${this.cmd} mode ${this.pin} ${this.mode}`);
     }
 
     read(){
-        return this.cmd(`gpio read ${this.pin}`)
+        return this.cmd(`${this.cmd} read ${this.pin}`)
             .then((state)=> {
                 return state.replace(/[^\d]/gm,'');
             });
     }
 
     write(value){
-        return this.cmd(`gpio write ${this.pin} ${value}`);
+        return this.cmd(`${this.cmd} write ${this.pin} ${value}`);
     }
 
     cmd(command) {
